@@ -281,6 +281,8 @@ In case of query regarding this repo please contact the following contributors:
 - [Aryan Singh](https://github.com/build-error)
 - [Sarvesh Thakur](https://github.com/ThakurSarveshGit)
 - [Suraj Patni](https://github.com/surajiitd)
+- [Jai Tyagi](https://github.com/Jai132)
+  
 
 ### Steps to run ORBSLAM2 with app.
 
@@ -622,4 +624,3 @@ Upgrade all the installed packages, including `librealsense` with:
 
 Now to check if the installation of the library has been done correctly:
   `realsense-viewer`
-This should open the RealSense Viewer GUI:
