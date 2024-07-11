@@ -392,6 +392,15 @@ namespace ORB_SLAM3
     {
         unique_lock<mutex> lock(mMutexFinish);
         mbFinishRequested = true;
+
+        // cout << "[Viewer: RequestFinish]: request forced: " << this->mbFinished << endl; //debug line
+        // while(!this->mbFinished)
+        // {
+        //     // this->SetFinish();
+        //     cout << "Trying to stop viewer\n";
+        // }
+        //
+        // cout << "[Viewer: RequestFinish]: request forced: " << this->mbFinished << endl; //debug line
     }
 
     bool Viewer::CheckFinish()

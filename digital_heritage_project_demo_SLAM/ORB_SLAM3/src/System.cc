@@ -531,21 +531,37 @@ namespace ORB_SLAM3
             unique_lock<mutex> lock(mMutexReset);
             mbShutDown = true;
         }
-
+        cout << "Shutdown 0" << endl; //debug line
         cout << "Shutdown 1" << endl;
 
         mpLocalMapper->RequestFinish();
         mpLoopCloser->RequestFinish();
-        if (mpViewer)
-        {
-            mpViewer->RequestFinish();
-            while (!mpViewer->isFinished())
-                usleep(5000);
-        }
+        cout << "Shutdown 1-2" << endl; //debug line
+
+        // if (mpViewer)
+        // {
+        mpViewer->RequestFinish();
+        //     cout << "request is finished" << endl; //debug line
+        //
+        //     while (!mpViewer->isFinished())
+        //         usleep(1000);
+        // }
+
+        // cout << "Shutdown 1-2 - mpViewer" << endl; //debug line
 
         // Wait until all thread have effectively stopped
+        cout << "Mapper: " << mpLocalMapper->isFinished() << endl;
+        cout << "LoopCloser: " << mpLoopCloser->isFinished() << endl;
+        cout << "Global Bundle Adjustment: " << mpLoopCloser->isRunningGBA() << endl;
+
         while (!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA())
         {
+            cout << "Mapper: " << mpLocalMapper->isFinished() << endl;
+            cout << "LoopCloser: " << mpLoopCloser->isFinished() << endl;
+            cout << "Global Bundle Adjustment: " << mpLoopCloser->isRunningGBA() << endl;
+
+
+
             if (!mpLocalMapper->isFinished())
                 cout << "mpLocalMapper is not finished" << endl;
             if (!mpLoopCloser->isFinished())
@@ -1379,7 +1395,8 @@ namespace ORB_SLAM3
 
     bool System::isFinished()
     {
-        return (GetTimeFromIMUInit() > 0.1);
+        return true;
+        //return (GetTimeFromIMUInit() > 0.1);
     }
 
     void System::ChangeDataset()
@@ -1428,18 +1445,49 @@ namespace ORB_SLAM3
             cout << "Save Atlas 1 \n";
             mpAtlas->PreSave();
             cout << "Save Atlas 2 \n";
-            string pathSaveFileName = "Maps/";
+            // string pathSaveFileName = "";
 
             // Print the current date and time
             std::cout << "############# Checkpoint inside System.cc ###############" << std::endl;
-            std::cout << "Now date and time: " << std::ctime(&checkpoint) << std::endl;
-            std::cout << "Current date and time: " << std::to_string(checkpoint) << std::endl;
+            // std::cout << "Now date and time: " << std::ctime(&checkpoint) << std::endl;
+            // std::cout << "Current date and time: " << std::to_string(checkpoint) << std::endl;
 
-            pathSaveFileName = pathSaveFileName.append(mStrSaveAtlasToFile);
+            std::cout << "Now date and time: " << std::ctime(&checkpoint) << std::endl;
+
+            auto current_time_point = std::chrono::system_clock::now();
+            auto current_time_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(current_time_point.time_since_epoch()).count();
+            std::time_t current_time_t = std::chrono::system_clock::to_time_t(current_time_point);
+
+            // Convert to tm structure for localtime
+            std::tm current_time_tm = *std::localtime(&current_time_t);
+
+            // Format the time to a human-readable string
+            std::ostringstream time_stream;
+            time_stream << std::put_time(&current_time_tm, "%H:%M:%S %d-%m-%Y");
+            std::string formatted_time = time_stream.str();
+
+            std::cout << "Current date and time: " << formatted_time << std::endl;
+            cout << "    \n";
+            // Convert to string using std::strftime
+            // char buffer[80];
+            // std::tm* timeinfo = std::localtime(&checkpoint);
+            // std::strftime(buffer, 80, "Current date and time: %Y%m%d%H%M%S", timeinfo);
+            // std::cout << buffer << std::endl;
+            // checkpoint = std::to_string(&buffer);
+
+
+            string pathSaveFileName = mStrSaveAtlasToFile; // Maps\\VisionLab_
             pathSaveFileName = pathSaveFileName.append("_");
-            pathSaveFileName = pathSaveFileName.append(std::to_string(checkpoint));
+            // pathSaveFileName = pathSaveFileName.append(std::to_string(std::ctime(&checkpoint)));
+            // pathSaveFileName = pathSaveFileName.append(std::string(std::ctime(&checkpoint)));
+
+            auto now = std::chrono::system_clock::now();
+            auto now_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+            pathSaveFileName.append(std::to_string(now_ns));
+
+            //pathSaveFileName.append(std::to_string(checkpoint));
             pathSaveFileName = pathSaveFileName.append(".osa");
-            cout << "Save Atlas 3 \n";
+            cout << "Save Atlas 3 " << pathSaveFileName << "\n";
 
             string strVocabularyChecksum = "visionLab"; // CalculateCheckSum(mStrVocabularyFilePath,TEXT_FILE);
             std::size_t found = mStrVocabularyFilePath.find_last_of("/\\");

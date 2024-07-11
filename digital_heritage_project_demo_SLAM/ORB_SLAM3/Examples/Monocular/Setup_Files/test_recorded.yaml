@@ -18,7 +18,7 @@ System.LoadAtlasFromFile: "VisionLab_Map_1711617032"
 checkpoint: 1711617032
 showGUI: 0
 performPost: 1
-hostip: "192.168.60.18"
+hostip: "192.168.71.18"
 portNum: "8080"
 SSID: "POCO X3 Pro"
 
