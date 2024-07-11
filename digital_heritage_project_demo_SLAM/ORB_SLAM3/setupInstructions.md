@@ -1,7 +1,7 @@
 # ORB_SLAM2 Setup on NVIDIA Jetson AGX Xavier (For Monocular Cameras Only) (by Aryan Singh) 
 
 ### Important Notes before starting setup.
-- for now, later we will update it for RGB-D cameras as well
+- for now, later we will update it for [RGB-D cameras]() as well
 
 - the below setup was initially written for ORBSLAM_2 but, this same can work for ORB_SLAM3 as well. You may also want to go through setup instructions written my Sarvesh Thakur as some of the dependency issues are covered there as well.
 
@@ -281,6 +281,8 @@ In case of query regarding this repo please contact the following contributors:
 - [Aryan Singh](https://github.com/build-error)
 - [Sarvesh Thakur](https://github.com/ThakurSarveshGit)
 - [Suraj Patni](https://github.com/surajiitd)
+- [Jai Tyagi](https://github.com/Jai132)
+  
 
 ### Steps to run ORBSLAM2 with app.
 
@@ -304,21 +306,26 @@ OS: Ubuntu 20.04
 
 1. Pangolin Installation:
 	# Get Pangolin
-	cd ~/your_fav_code_directory
+	```bash
+ 	cd ~/your_fav_code_directory
 	git clone --recursive https://github.com/stevenlovegrove/Pangolin.git
 	cd Pangolin
-	
+	```
+ 
 	# Get CMAKE
+	```bash
 	sudo apt-get install build-essential --yes
 	sudo apt install cmake --yes
+ 	```
 	
 	# Catch2 Installation
+	```bash
 	$ cd ..
 	$ git clone https://github.com/catchorg/Catch2.git -b v2.13.4
 	$ cd Catch2
 	$ cmake -Bbuild -H. -DBUILD_TESTING=OFF
 	$ sudo cmake --build build/ --target install 
-
+	```
 	# Install dependencies (as described above, or your preferred method)
 	
 	# Run Dependency script provided in Pangolin Repository:
@@ -375,7 +382,8 @@ OS: Ubuntu 20.04
 		ctest
 		
 	
-2. Install OPENCV4
+3. Install OPENCV4
+   ```bash
 	sudo apt-get install build-essential cmake git pkg-config
 	sudo apt-get install python3-dev python3-numpy
 	sudo apt-get install libjpeg-dev libpng-dev
@@ -391,17 +399,21 @@ OS: Ubuntu 20.04
 	mkdir build
 	cd build
 	cmake ..
-	make -j4
+	make -j$(($(nproc)-1))
+  
+   ```
 
-3. Install ORB-SLAM3
+4. Install ORB-SLAM3 (please install [curl](https://github.com/Jai132/NVIDIA_Jetson_Inference/edit/main/digital_heritage_project_demo_SLAM/ORB_SLAM3/setupInstructions.md#31-setup-native-curl) first)
+   ```bash
 	chmod +x build.sh
 	./build.sh
-	
-	3.1 If error is about "error: ‘m_slots’ was not declared in this scope":
+   ```
+   If error is about "error: ‘m_slots’ was not declared in this scope":
 		sed -i 's/++11/++14/g' CMakeLists.txt
 		then try installation again.
-	
-4. Run ORBSLAM3 on EuRoC dataset
+
+   
+6. Run ORBSLAM3 on EuRoC dataset
 	Download sample datasets from here(https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets) - one easy [MH01], one difficult [MH05]
 	Put the extracted downloaded datasets in this format inside Examples directory:
 		Datasets/EuRoC/...
@@ -420,10 +432,10 @@ OS: Ubuntu 20.04
 	Build again.
 	Run again.
 
-5. Benchmarking EuRoC Evaluation
+7. Benchmarking EuRoC Evaluation
 	Run Evaluation Script
 	
-6. Running with ROS
+8. Running with ROS
 	Update build_ros.sh if you have conda installed.
 	Better create an environment named ROS and give it's path for Python executable.
 	
@@ -461,4 +473,154 @@ OS: Ubuntu 20.04
 			 to     find_package(Boost REQUIRED python)
 		cd to catkin_ws
 		catkin_make -j4
-		
+
+
+
+
+## Installation of Intel RealSense 2.0 SDK (librealsense2.0)
+
+## Install dependencies
+
+1. Make Ubuntu up-to-date including the latest stable kernel:
+   ```sh
+   sudo apt-get update && sudo apt-get upgrade && sudo apt-get dist-upgrade
+   ```
+2. Install the core packages required to build _librealsense_ binaries and the affected kernel modules:
+   ```sh
+   sudo apt-get install libssl-dev libusb-1.0-0-dev libudev-dev pkg-config libgtk-3-dev
+   ```
+   **Cmake Note:** certain _librealsense_ [CMAKE](https://cmake.org/download/) flags (e.g. CUDA) require version 3.8+ which is currently not made available via apt manager for Ubuntu LTS.
+3. Install build tools
+   ```sh
+   sudo apt-get install git wget cmake build-essential
+   ```
+4. Prepare Linux Backend and the Dev. Environment \
+   Unplug any connected Intel RealSense camera and run:
+   ```sh
+   sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev at
+   ```
+5. Install IDE (Optional): \
+   We use [QtCreator](https://wiki.qt.io/Main) as an IDE for Linux development on Ubuntu.
+
+**Note**:
+
+* on graphic sub-system utilization: \
+*glfw3*, *mesa* and *gtk* packages are required if you plan to build the SDK's OpenGL-enabled examples. \
+The *librealsens2e* core library and a range of demos/tools are designed for headless environment deployment.
+
+* `libudev-dev` installation is optional but recommended, \
+when the `libudev-dev` is installed the SDK will use an event-driven approach for triggering USB detection and enumeration, \
+if not the SDK will use a timer polling approach which is less sensitive for device detection.
+
+
+## Install librealsense2
+
+1. Clone/Download the latest stable version of _librealsense2_ in one of the following ways:
+   * Clone the _librealsense2_ repo
+     ```sh
+     git clone https://github.com/IntelRealSense/librealsense.git
+     ```
+   * Download and unzip the latest stable _librealsense2_ version from `master` branch \
+     [IntelRealSense.zip](https://github.com/IntelRealSense/librealsense/archive/master.zip)
+
+2. Run Intel Realsense permissions script from _librealsense2_ root directory:
+   ```sh
+   ./scripts/setup_udev_rules.sh
+   ```
+   Notice: You can always remove permissions by running: `./scripts/setup_udev_rules.sh --uninstall`
+
+3. Build and apply patched kernel modules for:
+    * Ubuntu 20/22 (focal/jammy) with LTS kernel 5.13, 5.15, 5.19, 6.2, 6.5 \
+      `./scripts/patch-realsense-ubuntu-lts-hwe.sh`
+    * Ubuntu 18/20 with LTS kernel (< 5.13) \
+     `./scripts/patch-realsense-ubuntu-lts.sh`
+
+    **Note:** What the *.sh script perform?
+    The script above will download, patch and build realsense-affected kernel modules (drivers). \
+    Then it will attempt to insert the patched module instead of the active one. If failed
+    the original uvc modules will be restored.
+
+   >  Check the patched modules installation by examining the generated log as well as inspecting the latest entries in kernel log: \
+       `sudo dmesg | tail -n 50` \
+       The log should indicate that a new _uvcvideo_ driver has been registered.  
+       Refer to [Troubleshooting](#troubleshooting-installation-and-patch-related-issues) in case of errors/warning reports.
+
+
+## Building librealsense2 SDK
+
+  * Navigate to _librealsense2_ root directory and run:
+    ```sh
+    mkdir build && cd build
+    ```
+  * Run cmake configure step, here are some cmake configure examples:\
+    The default build is set to produce the core shared object and unit-tests binaries in Debug mode.\
+    Use `-DCMAKE_BUILD_TYPE=Release` to build with optimizations.
+    ```sh
+    cmake ../
+    ```
+    Builds _librealsense2_ along with the demos and tutorials:
+    ```sh
+    cmake ../ -DBUILD_EXAMPLES=true
+    ```
+    For systems without OpenGL or X11 build only textual examples:
+    ```sh
+    cmake ../ -DBUILD_EXAMPLES=true -DBUILD_GRAPHICAL_EXAMPLES=false
+    ```
+  * Recompile and install _librealsense2_ binaries:
+    ```sh
+    sudo make uninstall && make clean && make && sudo make install
+    ```
+    **Note:** Only relevant to CPUs with more than 1 core: use `make -j$(($(nproc)-1)) install` allow parallel compilation.
+
+    **Note:** The shared object will be installed in `/usr/local/lib`, header files in `/usr/local/include`. \
+    The binary demos, tutorials and test files will be copied into `/usr/local/bin`
+
+    **Note:** Linux build configuration is presently configured to use the V4L2 backend by default. \
+    **Note:** If you encounter the following error during compilation `gcc: internal compiler error` \
+    it might indicate that you do not have enough memory or swap space on your machine. \
+    Try closing memory consuming applications, and if you are running inside a VM, increase available RAM to at least 2 GB. \
+    **Note:** You can find more information about the available configuration options on [this wiki page](https://github.com/IntelRealSense/librealsense/wiki/Build-Configuration). Now follow the below instructions:
+
+
+
+## Installing the packages:
+- Register the server's public key:
+```
+sudo mkdir -p /etc/apt/keyrings
+curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp > /dev/null
+```
+
+- Make sure apt HTTPS support is installed:
+`sudo apt-get install apt-transport-https`
+
+- Add the server to the list of repositories:
+```
+echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | \
+sudo tee /etc/apt/sources.list.d/librealsense.list
+sudo apt-get update
+```
+
+- Install the libraries (see section below if upgrading packages):  
+  `sudo apt-get install librealsense2-dkms`  
+  `sudo apt-get install librealsense2-utils`  
+  The above two lines will deploy librealsense2 udev rules, build and activate kernel modules, runtime library and executable demos and tools.  
+
+- Optionally install the developer and debug packages:  
+  `sudo apt-get install librealsense2-dev`  
+  `sudo apt-get install librealsense2-dbg`  
+  With `dev` package installed, you can compile an application with **librealsense** using `g++ -std=c++11 filename.cpp -lrealsense2` or an IDE of your choice.
+
+Reconnect the Intel RealSense depth camera and run: `realsense-viewer` to verify the installation.
+
+Verify that the kernel is updated :    
+`modinfo uvcvideo | grep "version:"` should include `realsense` string
+
+## Upgrading the Packages:
+Refresh the local packages cache by invoking:  
+  `sudo apt-get update`  
+
+Upgrade all the installed packages, including `librealsense` with:  
+  `sudo apt-get upgrade`
+
+Now to check if the installation of the library has been done correctly:
+  `realsense-viewer`
