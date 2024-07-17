@@ -1,10 +1,15 @@
 %YAML:1.0
 
-System.SaveAtlasToFile: "VisionLab"
+#System.SaveAtlasToFile: "VisionLab"
+System.LoadAtlasFromFile: "VisionLab_1721208882"
 #--------------------------------------------------------------------------------------------
 # Camera Parameters. Adjust them!
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
+
+
+#showGUI: 0
+#localizationMode: 1
 
 Camera.type: "PinHole"
 

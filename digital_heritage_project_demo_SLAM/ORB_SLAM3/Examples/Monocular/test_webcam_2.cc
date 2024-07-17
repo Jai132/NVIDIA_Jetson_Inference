@@ -181,6 +181,7 @@ int main(int argc, char **argv)
         std::cout << "Current date and time: " << std::ctime(&checkpoint) << std::endl; // long to time format
 
         std::string outputFolder = argv[3];
+        cout << "Output folder: " << outputFolder << endl;
         outputFolder += "_" + std::to_string(checkpoint);
         std::string timestampsFile = argv[4];
         timestampsFile += "_" + std::to_string(checkpoint) + ".txt";

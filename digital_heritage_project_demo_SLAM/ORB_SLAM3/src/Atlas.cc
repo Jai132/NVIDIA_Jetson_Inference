@@ -320,6 +320,10 @@ void Atlas::PreSave()
 
     std::cout << "PreSave 3\n";
     std::set<GeometricCamera*> spCams(mvpCameras.begin(), mvpCameras.end());
+    std::cout << "PreSave 3-1\n";
+
+
+
 
     try {
         for (Map* pMi : mvpBackupMaps) {

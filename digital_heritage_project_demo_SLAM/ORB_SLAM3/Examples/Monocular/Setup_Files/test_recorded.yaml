@@ -7,7 +7,7 @@
 # When the variables are commented, the system doesn't load a previous session or not store the current one
 
 # If the LoadFile doesn't exist, the system give a message and create a new Atlas from scratch
-System.LoadAtlasFromFile: "VisionLab_Map_1711617032"
+System.LoadAtlasFromFile: "VisionLab_1721202830"
 
 # The store file is created from the current session, if a file with the same name exists it is deleted
 # System.SaveAtlasToFile: "VisionLab_Map_jai"
@@ -15,13 +15,13 @@ System.LoadAtlasFromFile: "VisionLab_Map_1711617032"
 #--------------------------------------------------------------------------------------------
 # My Custom Parameters
 #--------------------------------------------------------------------------------------------
-checkpoint: 1711617032
-showGUI: 0
+checkpoint: 1721202797
+showGUI: 1
 performPost: 1
-hostip: "192.168.71.18"
+hostip: "192.168.234.18"
 portNum: "8080"
 SSID: "POCO X3 Pro"
-
+localizationMode: 1
 #--------------------------------------------------------------------------------------------
 # Camera Parameters. Adjust them!
 #--------------------------------------------------------------------------------------------

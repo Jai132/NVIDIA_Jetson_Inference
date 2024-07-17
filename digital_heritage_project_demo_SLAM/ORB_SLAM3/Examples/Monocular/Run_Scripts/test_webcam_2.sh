@@ -33,10 +33,10 @@ fi
 
 if [ "$localizationMode" -eq 0 ]; then
     timeStampFileName='timestamps'
-    timeStampDirectory='../Datasets/Monocular/Custom_TimeStamps/'$timeStampFileName
+    timeStampDirectory='../Datasets/Custom/Custom_TimeStamps/'$timeStampFileName
 
     DatasetFolderName='custom_data'
-    DatasetDirectory='../Datasets/Monocular/'$DatasetFolderName
+    DatasetDirectory='../Datasets/Custom/'$DatasetFolderName
 
     ./test_webcam_2 ../../Vocabulary/ORBvoc.txt $settingsDirectory $DatasetDirectory $timeStampDirectory $trajectoryFileName
 elif [ "$localizationMode" -eq 1 ]; then

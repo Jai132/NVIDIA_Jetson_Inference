@@ -98,6 +98,7 @@ namespace ORB_SLAM3
             if (!node.empty() && node.isString())
             {
                 mStrLoadAtlasFromFile = (string)node;
+                // mbActivateLocalizationMode = true; // force localization mode whenever System.LoadAtlasFromFile is present in YAML config file.
             }
 
             node = fsSettings["System.SaveAtlasToFile"];
@@ -1455,7 +1456,7 @@ namespace ORB_SLAM3
             std::cout << "Now date and time: " << std::ctime(&checkpoint) << std::endl;
 
             auto current_time_point = std::chrono::system_clock::now();
-            auto current_time_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(current_time_point.time_since_epoch()).count();
+            auto current_time_ns = std::chrono::duration_cast<std::chrono::seconds>(current_time_point.time_since_epoch()).count();
             std::time_t current_time_t = std::chrono::system_clock::to_time_t(current_time_point);
 
             // Convert to tm structure for localtime
@@ -1482,7 +1483,7 @@ namespace ORB_SLAM3
             // pathSaveFileName = pathSaveFileName.append(std::string(std::ctime(&checkpoint)));
 
             auto now = std::chrono::system_clock::now();
-            auto now_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+            auto now_ns = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
             pathSaveFileName.append(std::to_string(now_ns));
 
             //pathSaveFileName.append(std::to_string(checkpoint));
@@ -1527,7 +1528,7 @@ namespace ORB_SLAM3
         string strFileVoc, strVocChecksum;
         bool isRead = false;
 
-        string pathLoadFileName = "Maps/";
+        string pathLoadFileName = "";
         pathLoadFileName = pathLoadFileName.append(mStrLoadAtlasFromFile);
         pathLoadFileName = pathLoadFileName.append(".osa");
 
@@ -1550,7 +1551,7 @@ namespace ORB_SLAM3
         }
         else if (type == BINARY_FILE) // File binary
         {
-            cout << "Starting to read the save text file from " << pathLoadFileName << "\nPWD: " << boost::filesystem::current_path().string() << endl;
+            cout << "Starting to read the save binary file from " << pathLoadFileName << "\nPWD: " << boost::filesystem::current_path().string() << endl;
 
             std::ifstream ifs(pathLoadFileName, std::ios::binary);
             if (!ifs.good())

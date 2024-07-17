@@ -883,7 +883,7 @@ void KeyFrame::PreSave(set<KeyFrame*>& spKF,set<MapPoint*>& spMP, set<GeometricC
             mvBackupChildrensId.push_back(pKFi->mnId);
     }
 
-    // cout << "KF PreSave 4\n";
+    cout << "KF PreSave 4\n";
     // Save the id of the loop edge KF
     mvBackupLoopEdgesId.clear();
     mvBackupLoopEdgesId.reserve(mspLoopEdges.size());
@@ -893,7 +893,7 @@ void KeyFrame::PreSave(set<KeyFrame*>& spKF,set<MapPoint*>& spMP, set<GeometricC
             mvBackupLoopEdgesId.push_back(pKFi->mnId);
     }
 
-    // cout << " KF PreSave 5\n";
+    cout << " KF PreSave 5\n";
     // Save the id of the merge edge KF
     mvBackupMergeEdgesId.clear();
     mvBackupMergeEdgesId.reserve(mspMergeEdges.size());
@@ -903,18 +903,18 @@ void KeyFrame::PreSave(set<KeyFrame*>& spKF,set<MapPoint*>& spMP, set<GeometricC
             mvBackupMergeEdgesId.push_back(pKFi->mnId);
     }
 
-    // cout << "KF PreSave 6\n";
+    cout << "KF PreSave 6\n";
     //Camera data
     mnBackupIdCamera = -1;
     if(mpCamera && spCam.find(mpCamera) != spCam.end())
         mnBackupIdCamera = mpCamera->GetId();
 
-    // cout << "KF PreSave 7\n";
+    cout << "KF PreSave 7\n";
     mnBackupIdCamera2 = -1;
     if(mpCamera2 && spCam.find(mpCamera2) != spCam.end())
         mnBackupIdCamera2 = mpCamera2->GetId();
 
-    // cout << "KF PreSave 8\n";
+    cout << "KF PreSave 8\n";
     //Inertial data
     mBackupPrevKFId = -1;
     if(mPrevKF && spKF.find(mPrevKF) != spKF.end())
