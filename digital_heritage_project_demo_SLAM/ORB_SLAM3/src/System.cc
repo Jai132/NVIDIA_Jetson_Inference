@@ -181,7 +181,11 @@ namespace ORB_SLAM3
 
             loadedAtlas = true;
 
-            mpAtlas->CreateNewMap();
+            // DEBUG: LOCALIZATION MODE MAP FROM https://github.com/UZ-SLAMLab/ORB_SLAM3/issues/515
+            // mpAtlas->CreateNewMap();
+            vector<Map*> map_vector = mpAtlas->GetAllMaps();
+            mpAtlas->ChangeMap(map_vector.at(0));
+
 
             // clock_t timeElapsed = clock() - start;
             // unsigned msElapsed = timeElapsed / (CLOCKS_PER_SEC / 1000);
@@ -619,6 +623,8 @@ namespace ORB_SLAM3
         ofstream f;
         f.open(filename.c_str());
         f << fixed;
+
+        cout << "Still trying to save TrajectoryTUM\n";
 
         // Frame pose is stored relative to its reference keyframe (which is optimized by BA and pose graph).
         // We need to get first the keyframe pose and then concatenate the relative transformation.

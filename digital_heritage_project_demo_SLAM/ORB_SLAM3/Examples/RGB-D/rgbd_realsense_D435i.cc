@@ -399,6 +399,35 @@ int main(int argc, char **argv)
 #endif
     }
     cout << "System shutdown!\n";
+
+
+    const string KF_Trajectory_pathSaveFileName = "KeyFramesTrajectory/";
+    const string C_Trajectory_pathSaveFileName = "CameraTrajectory/";
+    // try {
+    //     if (std::filesystem::create_directory(KF_Trajectory_pathSaveFileName)) {
+    //         std::cout << "Directory created successfully.\n";
+    //     } else {
+    //         std::cout << "Directory already exists or failed to create.\n" << KF_Trajectory_pathSaveFileName << endl;
+    //     }
+    //     if (std::filesystem::create_directory(C_Trajectory_pathSaveFileName)) {
+    //         std::cout << "Directory created successfully.\n";
+    //     } else {
+    //         std::cout << "Directory already exists or failed to create.\n" << C_Trajectory_pathSaveFileName << endl;
+    //     }
+    // } catch (const std::filesystem::filesystem_error& e) {
+    //     std::cerr << "Filesystem error: " << e.what() << '\n';
+    // }
+
+    // Save camera trajectory
+    const string kf_file_tum = KF_Trajectory_pathSaveFileName + "kf_" + file_name + "-rgbd.tum";
+    const string kf_file_kitti = KF_Trajectory_pathSaveFileName + "kf_" + file_name + "-rgbd.kitti";
+    SLAM.SaveKeyFrameTrajectoryTUM(kf_file_tum);
+    SLAM.SaveTrajectoryKITTI(kf_file_kitti);
+
+    const string f_file_tum = C_Trajectory_pathSaveFileName + "f_" + file_name + "-rgbd.tum";
+    const string f_file_kitti = C_Trajectory_pathSaveFileName + "f_" + file_name + "-rgbd.kitti";
+    SLAM.SaveTrajectoryTUM(f_file_tum);
+    SLAM.SaveTrajectoryKITTI(f_file_kitti);
 }
 
 rs2_stream find_stream_to_align(const std::vector<rs2::stream_profile> &streams)

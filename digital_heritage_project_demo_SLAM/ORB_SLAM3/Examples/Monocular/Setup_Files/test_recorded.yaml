@@ -7,7 +7,7 @@
 # When the variables are commented, the system doesn't load a previous session or not store the current one
 
 # If the LoadFile doesn't exist, the system give a message and create a new Atlas from scratch
-System.LoadAtlasFromFile: "VisionLab_1721202830"
+System.LoadAtlasFromFile: "VisionLab_1721287959"
 
 # The store file is created from the current session, if a file with the same name exists it is deleted
 # System.SaveAtlasToFile: "VisionLab_Map_jai"
@@ -15,7 +15,7 @@ System.LoadAtlasFromFile: "VisionLab_1721202830"
 #--------------------------------------------------------------------------------------------
 # My Custom Parameters
 #--------------------------------------------------------------------------------------------
-checkpoint: 1721202797
+checkpoint: 1721287899
 showGUI: 1
 performPost: 1
 hostip: "192.168.234.18"

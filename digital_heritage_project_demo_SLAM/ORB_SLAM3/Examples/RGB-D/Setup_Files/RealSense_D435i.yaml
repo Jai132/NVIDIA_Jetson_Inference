@@ -1,7 +1,7 @@
 %YAML:1.0
 
 #System.SaveAtlasToFile: "VisionLab"
-System.LoadAtlasFromFile: "VisionLab_1721208882"
+System.LoadAtlasFromFile: "VisionLab_1721384281"
 #--------------------------------------------------------------------------------------------
 # Camera Parameters. Adjust them!
 #--------------------------------------------------------------------------------------------
@@ -10,7 +10,6 @@ File.version: "1.0"
 
 #showGUI: 0
 #localizationMode: 1
-
 Camera.type: "PinHole"
 
 # Right Camera calibration and distortion parameters (OpenCV)
