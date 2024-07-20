@@ -41,14 +41,14 @@ connect_wifi() {
 
 # Check if the first argument is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 <mode: {recorded, depthcam}>"
+    echo "Usage: $0 <mode: {DigitalHeritage, depthcam}>"
     exit 1
 fi
 
 # Perform actions based on the selected mode
 if [ "$1" = "recorded" ]; then
     echo "MODE: recorded mode"
-    settingsFileName='test_recorded.yaml'
+    settingsFileName='RealSense_D435i.yaml'
 elif [ "$1" = "webcam2" ]; then
     echo "MODE: webcam2 mode"
     settingsFileName='test_depthcam.yaml'

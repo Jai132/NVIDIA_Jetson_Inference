@@ -41,17 +41,27 @@ connect_wifi() {
 
 # Check if the first argument is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 <mode: {recorded, webcam2}>"
+    echo "Usage: $0 <mode: {mono_recorded, mono_webcam2, rgbd_recorded, rgbd_webcam2}>"
     exit 1
 fi
 
 # Perform actions based on the selected mode
-if [ "$1" = "recorded" ]; then
-    echo "MODE: recorded mode"
+if [ "$1" = "mono_recorded" ]; then
+    echo "MODE: monocular recorded mode"
     settingsFileName='test_recorded.yaml'
-elif [ "$1" = "webcam2" ]; then
-    echo "MODE: webcam2 mode"
+    settingsDirectory='ORB_SLAM3/Examples/Monocular/'
+elif [ "$1" = "mono_webcam2" ]; then
+    echo "MODE: monocular webcam2 mode"
     settingsFileName='test_webcam_2.yaml'
+    settingsDirectory='ORB_SLAM3/Examples/Monocular/'
+elif [ "$1" = "rgbd_recorded" ]; then
+  echo "MODE: rgbd recorded mode"
+  settingsFileName=''
+  settingsDirectory='ORB_SLAM3/Examples/RGB-D/Setup_Files/'
+elif [ "$1" = "rgbd_webcam" ]; then
+  echo "MODE: rgbd webcam mode"
+  settingsFileName='RealSense_D435i.yaml'
+  settingsDirectory='ORB_SLAM3/Examples/RGB-D/Setup_Files/'
 else
     echo "Invalid mode: $1"
     exit 1
@@ -59,7 +69,7 @@ fi
 
 cd /home/vision/NVIDIA_Jetson_Inference/digital_heritage_project_demo_SLAM/
 
-settingsDirectory="ORB_SLAM3/Examples/Monocular/Setup_Files/"$settingsFileName
+settingsDirectory=$settingsDirectory$settingsFileName
 
 hostip=$(read_yaml "$settingsDirectory" hostip)
 portNum=$(read_yaml "$settingsDirectory" portNum)

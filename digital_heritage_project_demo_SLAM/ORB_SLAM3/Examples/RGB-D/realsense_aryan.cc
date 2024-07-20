@@ -28,7 +28,6 @@
 #include <condition_variable>
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/core/utility.hpp>
 
 #include <librealsense2/rs.hpp>
 #include "librealsense2/rsutil.h"
@@ -38,9 +37,9 @@
 using namespace std;
 
 bool b_continue_session;
+std::time_t checkpoint;
 bool performPost;
 std::string url;
-
 
 void exit_loop_handler(int s)
 {
@@ -104,39 +103,38 @@ static rs2_option get_sensor_option(const rs2::sensor &sensor)
 
 int main(int argc, char **argv)
 {
-
-    cv::FileStorage fileHandler(argv[2], cv::FileStorage::READ);
-    if (!fileHandler.isOpened())
+    cv::FileStorage fs(argv[2], cv::FileStorage::READ);
+    if (!fs.isOpened())
     {
         std::cerr << "Failed to open YAML file." << std::endl;
         return 1;
     }
 
     bool localizationMode;
-    fileHandler["localizationMode"] >> localizationMode;
+    fs["localizationMode"] >> localizationMode;
 
-    // if (!localizationMode && argc == 3)
-    // {
-    //     cerr << endl
-    //          << "Usage: path_to_examples/test_webcam path_to_vocabulary path_to_settings (trajectory_file_name)" << endl;
-    //     return 1;
-    // }
+    if (!localizationMode && argc == 3)
+    {
+        cerr << endl
+             << "Usage: path_to_examples/test_webcam path_to_vocabulary path_to_settings (trajectory_file_name)" << endl;
+        return 1;
+    }
 
-    // else if (localizationMode && argc == 3)
-    // {
-    //     cerr << endl
-    //          << "Usage: ./test_webcam path_to_vocabulary path_to_settings (trajectory_file_name)" << endl;
-    //     return 1;
-    // }
+    else if (localizationMode && argc == 3)
+    {
+        cerr << endl
+             << "Usage: ./test_webcam path_to_vocabulary path_to_settings (trajectory_file_name)" << endl;
+        return 1;
+    }
 
     std::string executableFileName(argv[0]);
 
     bool showGUI;
-    fileHandler["showGUI"] >> showGUI;
+    fs["showGUI"] >> showGUI;
     std::cout << "**(" << executableFileName << ") "
               << "showGUI = " << showGUI << std::endl;
 
-    fileHandler["performPost"] >> performPost;
+    fs["performPost"] >> performPost;
     std::cout << "**(" << executableFileName << ") "
               << "performPost = " << performPost << std::endl;
 
@@ -144,8 +142,8 @@ int main(int argc, char **argv)
     {
         std::string hostip;
         std::string portNum;
-        fileHandler["hostip"] >> hostip;
-        fileHandler["portNum"] >> portNum;
+        fs["hostip"] >> hostip;
+        fs["portNum"] >> portNum;
 
         std::cout << "**(" << executableFileName << ") "
                   << "Host Address = " << hostip << ":" << portNum << endl;
@@ -156,22 +154,6 @@ int main(int argc, char **argv)
                   << "Post API Endpoint = " << url << std::endl;
     }
 
-    if (argc < 3 || argc > 4)
-    {
-        cerr << endl
-             << "Usage: ./mono_inertial_realsense_D435i path_to_vocabulary path_to_settings (trajectory_file_name)"
-             << endl;
-        return 1;
-    }
-
-    string file_name;
-    bool bFileName = false;
-
-    if (argc == 4)
-    {
-        file_name = string(argv[argc - 1]);
-        bFileName = true;
-    }
 
     struct sigaction sigIntHandler;
 
@@ -181,6 +163,40 @@ int main(int argc, char **argv)
 
     sigaction(SIGINT, &sigIntHandler, NULL);
     b_continue_session = true;
+    
+    int cameraCap;
+    fs["Camera.cap"] >> cameraCap;
+    std::cout << "Camera.cap = " << cameraCap << std::endl;
+    cv::VideoCapture cap(cameraCap);
+
+    if (!cap.isOpened())
+    {
+        cerr << "Error: Unable to open webcam." << endl;
+        return 1;
+    }
+
+    int fps;
+    fs["Camera.fps"] >> fps;
+    std::cout << "Camera.fps = " << fps << std::endl;
+
+    int width, height;
+    fs["Camera.width"] >> width;
+    fs["Camera.height"] >> height;
+    std::cout << "Camera.width = " << width << std::endl;
+    std::cout << "Camera.height = " << height << std::endl;
+
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, width);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+    cap.set(cv::CAP_PROP_FPS, fps);
+
+    bool bFileName = true;
+    string file_name;
+
+    if (bFileName)
+    {
+        file_name = string(argv[argc - 1]);
+        cout << "Trajectory Filename: " << file_name << endl;
+    }
 
     double offset = 0; // ms
 

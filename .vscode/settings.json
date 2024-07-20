@@ -7,6 +7,11 @@
         "hash_set": "cpp",
         "any": "cpp",
         "string_view": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "functional": "cpp",
+        "new": "cpp",
+        "type_traits": "cpp",
+        "variant": "cpp",
+        "condition_variable": "cpp"
     }
 }

@@ -42,8 +42,14 @@
 
 #include <string>
 
-extern bool performPost;
+
+extern bool performPost; // coming from rgbd_realsense_d435.cc
 extern std::string url;
+
+// // changes for curl posting by Jai/Sarvesh
+// extern bool curlPost;
+// extern std::string url_to_post;
+
 
 namespace ORB_SLAM3
 {
@@ -85,6 +91,14 @@ namespace ORB_SLAM3
           mTlr(frame.mTlr), mRlr(frame.mRlr), mtlr(frame.mtlr), mTrl(frame.mTrl),
           mTcw(frame.mTcw), mbHasPose(false), mbHasVelocity(false)
     {
+
+        // // Chekcing if correct url read from YAML for posting
+        // cout << "Frame: url_to_post: " << url << endl;
+        // cout << "Frame: curlPost: " << performPost << endl;
+
+
+
+
         for (int i = 0; i < FRAME_GRID_COLS; i++)
             for (int j = 0; j < FRAME_GRID_ROWS; j++)
             {
@@ -528,8 +542,9 @@ namespace ORB_SLAM3
 
                 // // Create POST data
                 // std::string post_data = "x=0.0&y=0.23423&yaw=0.34534";
-                std::cout << "\n";
+                // std::cout << "\n";
                 std::string post_data = "x=" + std::to_string(mOw(0)) + "&y=" + std::to_string(mOw(2)) + "&yaw=" + std::to_string(pitch * 180.0 / M_PI);
+                // std::cout << post_data << std::endl;
 
                 // // Set the POST data
                 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());

@@ -42,6 +42,7 @@
 // #endif
 
 extern std::time_t checkpoint;
+
 namespace ORB_SLAM3
 {
     Verbose::eLevel Verbose::th = Verbose::VERBOSITY_NORMAL;
@@ -116,6 +117,27 @@ namespace ORB_SLAM3
         }
 
         mStrVocabularyFilePath = strVocFile;
+
+        // Custom Params in YAML File
+        // performPost: 1
+        // hostip: "127.0.0.1"
+        // portNum: "8080"
+        // SSID: "POCO X3 Pro"
+        
+        fsSettings["curlPost"] >> curlPost;
+        fsSettings["hostip"] >> hostip;
+        fsSettings["portNum"] >> portNum;
+        fsSettings["SSID"] >> SSID;
+        url_to_post = "http://" + hostip + ":" + portNum;
+
+        // TODO: Make curl variables part of System Class so it is generic.        
+
+        // std::cout << "curlPost = " << curlPost << std::endl;
+        // std::cout << "hostip = " << hostip << std::endl;
+        // std::cout << "portNum = " << portNum << std::endl;
+        // std::cout << "SSID = " << SSID << std::endl;
+        // std::cout << "url_to_post = " << url_to_post << std::endl;
+
 
         bool loadedAtlas = false;
 

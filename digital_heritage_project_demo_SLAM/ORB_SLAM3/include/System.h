@@ -184,6 +184,13 @@ namespace ORB_SLAM3
 
         float GetImageScale();
 
+        // Changes for Posting to URL - This is common to all - Monocular and RGBD
+        bool curlPost;
+        std::string url_to_post;
+        std::string hostip;
+        std::string portNum;
+        std::string SSID;
+
 #ifdef REGISTER_TIMES
             void
             InsertRectTime(double &time);
