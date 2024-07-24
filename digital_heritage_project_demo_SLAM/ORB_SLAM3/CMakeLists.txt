@@ -173,6 +173,10 @@ add_executable(p-rgbd_kitti
         Examples/RGB-D/p-rgbd_kitti.cc)
 target_link_libraries(p-rgbd_kitti ${PROJECT_NAME})
 
+add_executable(realsense_capture
+        Examples/RGB-D/realsense_capture.cc)
+target_link_libraries(realsense_capture ${PROJECT_NAME})
+
 if(realsense2_FOUND)
     add_executable(rgbd_realsense_D435i
             Examples/RGB-D/rgbd_realsense_D435i.cc)

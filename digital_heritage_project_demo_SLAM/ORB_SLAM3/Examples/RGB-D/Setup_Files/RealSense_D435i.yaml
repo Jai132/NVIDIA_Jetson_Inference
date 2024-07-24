@@ -1,13 +1,13 @@
 %YAML:1.0
 
 #System.SaveAtlasToFile: "VisionLab"
-System.LoadAtlasFromFile: "VisionLab_1721384281"
+System.LoadAtlasFromFile: "VisionLab_1721478022"
 
 #----------------------------------------------------------------------------------------------
 #My Custom Parameters
 #--------------------------------------------------------------------------------------------
 
-localizationMode: 0
+localizationMode: 1
 showGUI: 1
 performPost: 1
 hostip: "192.168.234.18"

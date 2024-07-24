@@ -41,7 +41,7 @@ connect_wifi() {
 
 # Check if the first argument is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 <mode: {mono_recorded, mono_webcam2, rgbd_recorded, rgbd_webcam2}>"
+    echo "Usage: $0 <mode: {mono_recorded, mono_webcam2, rgbd_recorded, rgbd_webcam}>"
     exit 1
 fi
 

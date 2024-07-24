@@ -1,0 +1,1 @@
+./rgbd_realsense_D435i ../../Vocabulary/ORBvoc.txt ./Setup_Files/RealSense_D435i.yaml
