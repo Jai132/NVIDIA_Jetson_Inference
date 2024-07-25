@@ -7,6 +7,11 @@
 #include <sstream>
 #include <sys/stat.h> // For creating directories
 #include <unistd.h>   // For checking directory existence
+#include <thread>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <fstream>    // For file operations
 
 // Function to get current Unix time in seconds
 std::string getCurrentUnixTime() {
@@ -51,11 +56,69 @@ void createDirectoryIfNotExists(const std::string& dirName) {
     }
 }
 
+// Frame buffer to hold frames
+std::queue<rs2::frameset> frameBuffer;
+std::mutex bufferMutex;
+std::condition_variable bufferCondVar;
+bool stopProcessing = false;
+
+// Frame processing function
+void processFrames(std::ofstream& rgbFile, std::ofstream& depthFile) {
+    while (true) {
+        std::unique_lock<std::mutex> lock(bufferMutex);
+        bufferCondVar.wait(lock, [] { return !frameBuffer.empty() || stopProcessing; });
+
+        if (stopProcessing && frameBuffer.empty()) {
+            break;
+        }
+
+        rs2::frameset frames = frameBuffer.front();
+        frameBuffer.pop();
+        lock.unlock();
+
+        // Align the depth frame to color frame
+        rs2::align align_to_color(RS2_STREAM_COLOR);
+        frames = align_to_color.process(frames);
+
+        // Get a frame from each stream
+        rs2::frame color_frame = frames.get_color_frame();
+        rs2::depth_frame depth_frame = frames.get_depth_frame();
+
+        // Create OpenCV matrices from the frames
+        cv::Mat color(cv::Size(640, 480), CV_8UC3, (void*)color_frame.get_data(), cv::Mat::AUTO_STEP);
+        cv::Mat depth = convertDepthFrame(depth_frame);
+
+        // Generate Unix time filename
+        std::string timestamp = getCurrentUnixTime();
+
+        // Save the images in respective directories
+        std::string colorFileName = "rgb/" + timestamp + ".png";
+        std::string depthFileName = "depth/" + timestamp + ".png";
+        cv::imwrite("../Datasets/custom_rgbd/rgb/" + timestamp + ".png", color);
+        cv::imwrite("../Datasets/custom_rgbd/depth/" + timestamp + ".png", depth);
+
+        // Write the timestamps and file paths to the text files
+        rgbFile << timestamp << " " << colorFileName << std::endl;
+        depthFile << timestamp << " " << depthFileName << std::endl;
+
+        std::cout << "Saved color and depth frames with timestamp: " << timestamp << std::endl;
+    }
+}
+
 int main() {
     try {
         // Create directories if they don't exist
         createDirectoryIfNotExists("../Datasets/custom_rgbd/rgb");
         createDirectoryIfNotExists("../Datasets/custom_rgbd/depth");
+
+        // Open text files for writing timestamps and paths
+        std::ofstream rgbFile("../Datasets/custom_rgbd/rgb.txt");
+        std::ofstream depthFile("../Datasets/custom_rgbd/depth.txt");
+
+        if (!rgbFile.is_open() || !depthFile.is_open()) {
+            std::cerr << "Failed to open output files." << std::endl;
+            return EXIT_FAILURE;
+        }
 
         // Declare RealSense pipeline, encapsulating the actual device and sensors
         rs2::pipeline pipe;
@@ -70,10 +133,10 @@ int main() {
         // Start the pipeline with the configuration
         rs2::pipeline_profile profile = pipe.start(cfg);
 
-        // Align depth to color stream
-        rs2::align align_to_color(RS2_STREAM_COLOR);
-
         std::cout << "RealSense camera connected and started successfully." << std::endl;
+
+        // Start frame processing thread
+        std::thread processingThread(processFrames, std::ref(rgbFile), std::ref(depthFile));
 
         bool stop = false;
 
@@ -81,34 +144,30 @@ int main() {
             // Wait for the next set of frames from the camera
             rs2::frameset frames = pipe.wait_for_frames();
 
-            // Align the depth frame to color frame
-            frames = align_to_color.process(frames);
-
-            // Get a frame from each stream
-            rs2::frame color_frame = frames.get_color_frame();
-            rs2::depth_frame depth_frame = frames.get_depth_frame();
-
-            // Create OpenCV matrices from the frames
-            cv::Mat color(cv::Size(640, 480), CV_8UC3, (void*)color_frame.get_data(), cv::Mat::AUTO_STEP);
-            cv::Mat depth = convertDepthFrame(depth_frame);
-
-            // Generate Unix time filename
-            std::string timestamp = getCurrentUnixTime();
-
-            // Save the images in respective directories
-            cv::imwrite("../Datasets/custom_rgbd/rgb/" + timestamp + "_color.png", color);
-            cv::imwrite("../Datasets/custom_rgbd/depth/" + timestamp + "_depth.png", depth);
-
-            std::cout << "Saved color and depth frames with timestamp: " << timestamp << std::endl;
+            // Add frames to buffer
+            std::unique_lock<std::mutex> lock(bufferMutex);
+            frameBuffer.push(frames);
+            lock.unlock();
+            bufferCondVar.notify_one();
 
             // Check for stop condition (Press 'q' to stop)
             if (cv::waitKey(1) == 'q') {
                 stop = true;
+                std::unique_lock<std::mutex> lock(bufferMutex);
+                stopProcessing = true;
+                bufferCondVar.notify_all();
             }
         }
 
         // Stop the pipeline
         pipe.stop();
+
+        // Wait for processing thread to finish
+        processingThread.join();
+
+        // Close the text files
+        rgbFile.close();
+        depthFile.close();
     } catch (const rs2::error &e) {
         std::cerr << "RealSense error calling " << e.get_failed_function() << "(" << e.get_failed_args() << "):\n"
                   << e.what() << std::endl;
