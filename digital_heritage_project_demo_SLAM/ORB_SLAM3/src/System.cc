@@ -375,6 +375,17 @@ namespace ORB_SLAM3
 
         cv::Mat imToFeed = im.clone();
         cv::Mat imDepthToFeed = depthmap.clone();
+
+        // bool debug = true;
+        // if (debug)
+        // {
+        //     cv::imshow("RGB", imToFeed);
+        //     cv::imshow("Depth", imDepthToFeed);
+        //     cv::waitKey(0);
+        //     cv::destroyAllWindows();
+        // }
+
+
         if (settings_ && settings_->needToResize())
         {
             cv::Mat resizedIm;

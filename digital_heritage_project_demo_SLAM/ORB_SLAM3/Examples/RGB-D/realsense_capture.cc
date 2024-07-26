@@ -28,13 +28,15 @@ cv::Mat convertDepthFrame(const rs2::depth_frame& depth_frame) {
     int height = depth_frame.get_height();
 
     // Create OpenCV matrix for the depth frame
+    // Assuming Kinect measures in mm, and realsense in meters.
     cv::Mat depth_image(cv::Size(width, height), CV_16UC1, (void*)depth_frame.get_data(), cv::Mat::AUTO_STEP);
+    depth_image = depth_image * 1000.0f; // Convert to mm
 
-    // Normalize the depth image to fall within the range 0-255
-    cv::Mat depth_image_normalized;
-    cv::normalize(depth_image, depth_image_normalized, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+    // // TODO: REMOVE: Normalize the depth image to fall within the range 0-255
+    // cv::Mat depth_image_normalized;
+    // cv::normalize(depth_image, depth_image_normalized, 0, 255, cv::NORM_MINMAX, CV_8UC1);
 
-    return depth_image_normalized;
+    return depth_image;//depth_image_normalized;//
 }
 
 // Function to check if a directory exists
