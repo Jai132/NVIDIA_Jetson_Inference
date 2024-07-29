@@ -1,69 +1,56 @@
 %YAML:1.0
 
-#System.SaveAtlasToFile: "VisionLab"
-System.LoadAtlasFromFile: "amul_wind_tunnel_1722177414"
 
-#----------------------------------------------------------------------------------------------
-#My Custom Parameters
-#--------------------------------------------------------------------------------------------
-
-localizationMode: 1
-showGUI: 1
-performPost: 1
-hostip: "192.168.211.18"
-portNum: "8080"
-SSID: "POCO X3 Pro"
+System.SaveAtlasToFile: "amul_wind_tunnel"
+#System.LoadAtlasFromFile: "TUMLab_1721920255"
+#-----------------
 
 
 #--------------------------------------------------------------------------------------------
 # Camera Parameters. Adjust them!
 #--------------------------------------------------------------------------------------------
-
 File.version: "1.0"
 
-
-#showGUI: 0
-#localizationMode: 1
 Camera.type: "PinHole"
 
-# Right Camera calibration and distortion parameters (OpenCV)
-Camera1.fx: 617.201
-Camera1.fy: 617.362
-Camera1.cx: 324.637
-Camera1.cy: 242.462
+# Camera calibration and distortion parameters (OpenCV) 
+Camera1.fx: 640.24675846
+Camera1.fy: 640.23463209
+Camera1.cx: 653.43358346
+Camera1.cy: 361.25268288
 
+Camera1.k1: -0.04328272
+Camera1.k2: 0.05870874
+Camera1.p1: -0.00088533
+Camera1.p2: 0.00131805
+Camera1.k3: -0.03594945
 
-# distortion parameters
-Camera1.k1: 0.0
-Camera1.k2: 0.0
-Camera1.p1: 0.0
-Camera1.p2: 0.0
-
-# Camera resolution
 Camera.width: 640
 Camera.height: 480
 
 # Camera frames per second 
-Camera.fps: 30
+Camera.fps: 60
+
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times.
 Stereo.ThDepth: 40.0
-Stereo.b: 0.0745
+Stereo.b: 0.095
 
 # Depth map values factor
-RGBD.DepthMapFactor: 1000.0
+RGBD.DepthMapFactor: 5000.0 # 1.0 for ROS_bag
 
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
+
 # ORB Extractor: Number of features per image
-ORBextractor.nFeatures: 1250
+ORBextractor.nFeatures: 1000
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	
-ORBextractor.scaleFactor: 1.2
+ORBextractor.scaleFactor: 1.1
 
 # ORB Extractor: Number of levels in the scale pyramid	
 ORBextractor.nLevels: 8
@@ -72,8 +59,8 @@ ORBextractor.nLevels: 8
 # Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
 # Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
 # You can lower these values if your images have low contrast			
-ORBextractor.iniThFAST: 20
-ORBextractor.minThFAST: 7
+ORBextractor.iniThFAST: 10
+ORBextractor.minThFAST: 2
 
 #--------------------------------------------------------------------------------------------
 # Viewer Parameters
@@ -86,5 +73,6 @@ Viewer.CameraSize: 0.08
 Viewer.CameraLineWidth: 3.0
 Viewer.ViewpointX: 0.0
 Viewer.ViewpointY: -0.7
-Viewer.ViewpointZ: -3.5
+Viewer.ViewpointZ: -1.8
 Viewer.ViewpointF: 500.0
+
