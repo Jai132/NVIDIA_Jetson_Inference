@@ -148,7 +148,8 @@ int main(int argc, char **argv)
 
         if (ttrack < T){
             cout << "wating for : " << (T - ttrack) * 1e-6 << " sec" << endl;
-            usleep((T - ttrack));
+            // usleep((T - ttrack));
+            usleep(0.1669);
         }
             
     }

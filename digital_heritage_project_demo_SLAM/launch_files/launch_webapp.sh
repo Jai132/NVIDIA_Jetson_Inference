@@ -60,7 +60,7 @@ elif [ "$1" = "rgbd_recorded" ]; then
   settingsDirectory='ORB_SLAM3/Examples/RGB-D/Setup_Files/'
 elif [ "$1" = "rgbd_webcam" ]; then
   echo "MODE: rgbd webcam mode"
-  settingsFileName='RealSense_D435i.yaml'
+  settingsFileName='d455_localization.yaml'
   settingsDirectory='ORB_SLAM3/Examples/RGB-D/Setup_Files/'
 else
     echo "Invalid mode: $1"

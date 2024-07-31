@@ -28,15 +28,10 @@ cv::Mat convertDepthFrame(const rs2::depth_frame& depth_frame) {
     int height = depth_frame.get_height();
 
     // Create OpenCV matrix for the depth frame
-    // Assuming Kinect measures in mm, and realsense in meters.
     cv::Mat depth_image(cv::Size(width, height), CV_16UC1, (void*)depth_frame.get_data(), cv::Mat::AUTO_STEP);
     depth_image = depth_image * 1000.0f; // Convert to mm
 
-    // // TODO: REMOVE: Normalize the depth image to fall within the range 0-255
-    // cv::Mat depth_image_normalized;
-    // cv::normalize(depth_image, depth_image_normalized, 0, 255, cv::NORM_MINMAX, CV_8UC1);
-
-    return depth_image;//depth_image_normalized;//
+    return depth_image;
 }
 
 // Function to check if a directory exists
@@ -135,7 +130,30 @@ int main() {
         // Start the pipeline with the configuration
         rs2::pipeline_profile profile = pipe.start(cfg);
 
-        std::cout << "RealSense camera connected and started successfully." << std::endl;
+        // Get the sensor
+        auto sensors = profile.get_device().query_sensors();
+        rs2::sensor sensor = sensors[0]; // Assuming the first sensor is the color sensor
+
+        // Set auto-exposure or manual exposure settings
+        if (sensor.supports(RS2_OPTION_ENABLE_AUTO_EXPOSURE)) {
+            // Enable auto-exposure
+            std::cout << "automatic selected." << std::endl;
+            sensor.set_option(RS2_OPTION_ENABLE_AUTO_EXPOSURE, 1);
+            
+        } else if (sensor.supports(RS2_OPTION_EXPOSURE)) {
+            // Set manual exposure (value in microseconds, adjust as needed)
+            std::cout << "manualselected." << std::endl;
+            sensor.set_option(RS2_OPTION_EXPOSURE, 10000); // Example value
+        }
+
+
+        // // Set manual exposure (value in microseconds, adjust as needed)
+        // std::cout << "automatic not selected." << std::endl;
+        // sensor.set_option(RS2_OPTION_EXPOSURE, 1000); // Example value
+
+
+        // Print confirmation
+        std::cout << "Exposure settings adjusted." << std::endl;
 
         // Start frame processing thread
         std::thread processingThread(processFrames, std::ref(rgbFile), std::ref(depthFile));

@@ -189,6 +189,9 @@ if(realsense2_FOUND)
     add_executable(run_localization_rgbd
             Examples/RGB-D/run_localization_rgbd.cc)
     target_link_libraries(run_localization_rgbd ${PROJECT_NAME})
+
+    add_executable(run_localization_recorded_rgbd Examples/RGB-D/run_localization_recorded_rgbd.cc)
+    target_link_libraries(run_localization_recorded_rgbd ${PROJECT_NAME})
 endif()
 
 

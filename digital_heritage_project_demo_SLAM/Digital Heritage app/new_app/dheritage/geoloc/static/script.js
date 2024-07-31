@@ -42,14 +42,14 @@ const initialData = {
         },
         //Manually enter the locations and their color
         {
-            label: 'location1',
+            label: 'l1',
             data: [{ x: obj[1]['x'], y: obj[1]['y'], yaw: obj[1]['yaw'] }],
             pointStyle: 'rect',
             backgroundColor: locationColor[0],
             pointRadius: 10
         },
         {
-            label: 'location2',
+            label: 'l2',
             data: [{ x: obj[2]['x'], y: obj[2]['y'], yaw: obj[2]['yaw'] }],
             pointStyle: 'rect',
             backgroundColor: locationColor[1],
@@ -66,18 +66,18 @@ const scatterPlot = new Chart(ctx1, {
     type: 'scatter',
     data: initialData,
     options: {
-        responsive: false, // Disable responsiveness
-        maintainAspectRatio: false, // Disable aspect ratio
+        responsive: true, // Disable responsiveness
+        maintainAspectRatio: true, // Disable aspect ratio
         width: chartWidth1, // Set chart width to match canvas width
         height: chartHeight1, // Set chart height to match canvas height
         scales: {
             x: {
-                min: -0.2,
-                max: 0.6
+                min: 0,
+                max: 600
             },
             y: {
-                min: -0.2,
-                max: 1
+                min: 0,
+                max: 800
             }
         },
         plugins: {

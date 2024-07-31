@@ -102,6 +102,35 @@ static rs2_option get_sensor_option(const rs2::sensor &sensor)
     return static_cast<rs2_option>(selected_sensor_option);
 }
 
+void LoadImages(const string &strAssociationFilename, vector<string> &vstrImageFilenamesRGB, vector<string> &vstrImageFilenamesD, vector<double> &vTimestamps)
+{
+    ifstream fAssociation;
+    fAssociation.open(strAssociationFilename.c_str());
+    while (!fAssociation.eof())
+    {
+        string s;
+        getline(fAssociation, s);
+        if (!s.empty())
+        {
+            stringstream ss;
+            ss << s;
+            double t;
+            string sRGB, sD;
+            ss >> t;
+            vTimestamps.push_back(t);
+            ss >> sRGB;
+            vstrImageFilenamesRGB.push_back(sRGB);
+            ss >> t;
+            ss >> sD;
+            vstrImageFilenamesD.push_back(sD);
+
+            cout << t << " " << sRGB << " " << t << " " << sD << endl;
+        }
+    }
+
+    cout << "Loaded " << vstrImageFilenamesRGB.size() << " images" << endl;
+}
+
 int main(int argc, char **argv)
 {
 
@@ -156,22 +185,22 @@ int main(int argc, char **argv)
                   << "Post API Endpoint = " << url << std::endl;
     }
 
-    if (argc < 3 || argc > 4)
-    {
-        cerr << endl
-             << "Usage: ./mono_inertial_realsense_D435i path_to_vocabulary path_to_settings (trajectory_file_name)"
-             << endl;
-        return 1;
-    }
+    // if (argc < 3 || argc > 4)
+    // {
+    //     cerr << endl
+    //          << "Usage: ./run_localization_recorded_rgbd path_to_vocabulary path_to_settings (trajectory_file_name)"
+    //          << endl;
+    //     return 1;
+    // }
 
     string file_name;
     bool bFileName = false;
 
-    if (argc == 4)
-    {
-        file_name = string(argv[argc - 1]);
-        bFileName = true;
-    }
+    // if (argc == 5)
+    // {
+    //     file_name = string(argv[argc - 1]);
+    //     bFileName = true;
+    // }
 
     struct sigaction sigIntHandler;
 
@@ -369,13 +398,25 @@ int main(int argc, char **argv)
     double t_track = 0.f;
     rs2::frameset fs;
 
-    while (!SLAM.isShutDown())
+
+    // Retrieve paths to images
+    vector<string> vstrImageFilenamesRGB;
+    vector<string> vstrImageFilenamesD;
+    vector<double> vTimestamps;
+    string strAssociationFilename = string(argv[4]);
+    LoadImages(strAssociationFilename, vstrImageFilenamesRGB, vstrImageFilenamesD, vTimestamps);
+
+    // Check consistency in the number of images and depthmaps
+    int nImages = vstrImageFilenamesRGB.size();
+    int ni = 0;
+
+    while (!SLAM.isShutDown() && ni < nImages)
     {
         {
             std::unique_lock<std::mutex> lk(imu_mutex);
             if (!image_ready)
                 cond_image_rec.wait(lk);
-
+ 
 #ifdef COMPILEDWITHC11
             std::chrono::steady_clock::time_point time_Start_Process = std::chrono::steady_clock::now();
 #else
@@ -402,8 +443,15 @@ int main(int argc, char **argv)
         rs2::video_frame color_frame = processed.first(align_to);
         rs2::depth_frame depth_frame = processed.get_depth_frame();
 
-        im = cv::Mat(cv::Size(width_img, height_img), CV_8UC3, (void *)(color_frame.get_data()), cv::Mat::AUTO_STEP);
-        depth = cv::Mat(cv::Size(width_img, height_img), CV_16U, (void *)(depth_frame.get_data()), cv::Mat::AUTO_STEP);
+        // im = cv::Mat(cv::Size(width_img, height_img), CV_8UC3, (void *)(color_frame.get_data()), cv::Mat::AUTO_STEP);
+        // depth = cv::Mat(cv::Size(width_img, height_img), CV_16U, (void *)(depth_frame.get_data()), cv::Mat::AUTO_STEP);
+
+        // ===================== Read from Folder ================================
+
+        // Read image and depthmap from file
+        im = cv::imread(string(argv[3]) + "/" + vstrImageFilenamesRGB[ni], cv::IMREAD_UNCHANGED); //,cv::IMREAD_UNCHANGED);
+        depth = cv::imread(string(argv[3]) + "/" + vstrImageFilenamesD[ni], cv::IMREAD_UNCHANGED);     //,cv::IMREAD_UNCHANGED);
+        ni++;
 
         /*cv::Mat depthCV_8U;
         depthCV.convertTo(depthCV_8U,CV_8U,0.01);

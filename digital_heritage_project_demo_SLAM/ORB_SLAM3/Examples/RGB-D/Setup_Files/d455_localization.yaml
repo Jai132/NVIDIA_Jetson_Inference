@@ -1,10 +1,18 @@
 %YAML:1.0
 
+#System.SaveAtlasToFile: "VisionLab"
+System.LoadAtlasFromFile: "final_map_outdoor_1722407845"
 
-System.SaveAtlasToFile: "final_map_outdoor"
-#System.LoadAtlasFromFile: "TUMLab_1721920255"
-#-----------------
+#----------------------------------------------------------------------------------------------
+#My Custom Parameters
+#--------------------------------------------------------------------------------------------
 
+localizationMode: 1
+showGUI: 1
+performPost: 1
+hostip: "192.168.211.18"
+portNum: "8080"
+SSID: "POCO X3 Pro"
 
 #--------------------------------------------------------------------------------------------
 # Camera Parameters. Adjust them!
