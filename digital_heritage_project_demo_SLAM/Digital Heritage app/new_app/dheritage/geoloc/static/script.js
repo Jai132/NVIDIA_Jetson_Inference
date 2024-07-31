@@ -4,7 +4,7 @@ console.log(hostName);
 
 var reached = false;
 var speech = new SpeechSynthesisUtterance();
-var locationColor = ['orange', 'purple'];
+var locationColor = ['orange', 'purple', 'green', 'yellow', 'blue'];
 var buttonState = 0;
 var button = document.getElementById('on-button')
 
@@ -42,17 +42,38 @@ const initialData = {
         },
         //Manually enter the locations and their color
         {
-            label: 'l1',
+            label: 'Wind Tunnel',
             data: [{ x: obj[1]['x'], y: obj[1]['y'], yaw: obj[1]['yaw'] }],
             pointStyle: 'rect',
             backgroundColor: locationColor[0],
             pointRadius: 10
         },
         {
-            label: 'l2',
+            label: 'Amul',
             data: [{ x: obj[2]['x'], y: obj[2]['y'], yaw: obj[2]['yaw'] }],
             pointStyle: 'rect',
             backgroundColor: locationColor[1],
+            pointRadius: 10
+        },
+        {
+            label: 'Bicycle Stand',
+            data: [{ x: obj[3]['x'], y: obj[3]['y'], yaw: obj[3]['yaw'] }],
+            pointStyle: 'rect',
+            backgroundColor: locationColor[2],
+            pointRadius: 10
+        },
+        {
+            label: 'Warehouse',
+            data: [{ x: obj[4]['x'], y: obj[4]['y'], yaw: obj[4]['yaw'] }],
+            pointStyle: 'rect',
+            backgroundColor: locationColor[3],
+            pointRadius: 10
+        },
+        {
+            label: 'SIT',
+            data: [{ x: obj[5]['x'], y: obj[5]['y'], yaw: obj[5]['yaw'] }],
+            pointStyle: 'rect',
+            backgroundColor: locationColor[4],
             pointRadius: 10
         }]
 };
@@ -66,18 +87,18 @@ const scatterPlot = new Chart(ctx1, {
     type: 'scatter',
     data: initialData,
     options: {
-        responsive: true, // Disable responsiveness
-        maintainAspectRatio: true, // Disable aspect ratio
+        responsive: false, // Disable responsiveness
+        maintainAspectRatio: false, // Disable aspect ratio
         width: chartWidth1, // Set chart width to match canvas width
         height: chartHeight1, // Set chart height to match canvas height
         scales: {
             x: {
                 min: 0,
-                max: 600
+                max: 500
             },
             y: {
                 min: 0,
-                max: 800
+                max: 700
             }
         },
         plugins: {
